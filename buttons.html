@@ -1,0 +1,310 @@
+<button type="button" class="btna">
+    button
+</button>
+<button type="button" class="btnb">
+    button
+</button>
+<button type="button" class="btnc">
+    button
+</button>
+<style>
+    button {
+        position: relative;
+        border: 0;
+        min-width: 64px;
+        cursor: pointer;
+        border-radius: 4px;
+        text-transform: uppercase;
+        height: 36px;
+        padding: 0 16px;
+        overflow: hidden;
+    }
+    /*颜色还需调整*/
+    .btna {
+        background-color: #000;
+        color: #fff;
+    }
+    .btna:hover {
+        background-color: #111;
+    }
+    .btna:focus {
+        background-color: #222;
+    }
+    .btnb,
+    .btnc {
+        background-color: transparent;
+        color: #000;
+    }
+    .btnb:hover,
+    .btnc:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: #000;
+    }
+    .btnb:focus,
+    .btnc:focus {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: #000;
+    }
+    .btnb {
+        border: solid 1px;
+    }
+    .waves-ripple {
+        position: absolute;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        margin-top: -10px;
+        margin-left: -10px;
+        opacity: 0;
+        transition: all 0.7s ease-out;
+        transition-property: transform, opacity;
+        transform: scale(0);
+    }
+    /*颜色还需调整*/
+    .btna .waves-ripple {
+        background: rgba(255, 255, 255, 0.5);
+    }
+    .btnc .waves-ripple,
+    .btnb .waves-ripple {
+        background: rgba(0, 0, 0, 0.5);
+    }
+</style>
+<script>
+    (function (window) {
+        "use strict";
+        var Waves = Waves || {};
+        var $$ = document.querySelectorAll.bind(document);
+
+        function isWindow(obj) {
+            return obj !== null && obj === obj.window;
+        }
+
+        function getWindow(elem) {
+            return isWindow(elem) ? elem : elem.nodeType === 9 && elem.defaultView;
+        }
+
+        function offset(elem) {
+            var docElem,
+                win,
+                box = {
+                    top: 0,
+                    left: 0
+                },
+                doc = elem && elem.ownerDocument;
+            docElem = doc.documentElement;
+            if (typeof elem.getBoundingClientRect !== typeof undefined) {
+                box = elem.getBoundingClientRect();
+            }
+            win = getWindow(doc);
+            return {
+                top: box.top + win.pageYOffset - docElem.clientTop,
+                left: box.left + win.pageXOffset - docElem.clientLeft
+            };
+        }
+
+        function convertStyle(obj) {
+            var style = "";
+            for (var a in obj) {
+                if (obj.hasOwnProperty(a)) {
+                    style += a + ":" + obj[a] + ";";
+                }
+            }
+            return style;
+        }
+        var Effect = {
+            duration: 750,
+            show: function (e, element) {
+                    if (e.button === 2) {
+                        return false;
+                    }
+                    var el = element || this;
+                    var ripple = document.createElement("div");
+                    ripple.className = "waves-ripple";
+                    el.appendChild(ripple);
+                    var pos = offset(el);
+                    var relativeY = e.pageY - pos.top;
+                    var relativeX = e.pageX - pos.left;
+                    var scale = "scale(" + (el.clientWidth / 100) * 10 + ")";
+                    if ("touches" in e) {
+                        relativeY = e.touches[0].pageY - pos.top;
+                        relativeX = e.touches[0].pageX - pos.left;
+                    }
+                    ripple.setAttribute("data-hold", Date.now());
+                    ripple.setAttribute("data-scale", scale);
+                    ripple.setAttribute("data-x", relativeX);
+                    ripple.setAttribute("data-y", relativeY);
+                    var rippleStyle = {
+                        top: relativeY + "px",
+                        left: relativeX + "px"
+                    };
+                    ripple.className = ripple.className + " waves-notransition";
+                    ripple.setAttribute("style", convertStyle(rippleStyle));
+                    ripple.className = ripple.className.replace("waves-notransition", "");
+                    rippleStyle.transform = scale;
+                    rippleStyle.opacity = "1";
+                    rippleStyle["transition-duration"] = Effect.duration + "ms";
+                    rippleStyle["transition-timing-function"] =
+                        "cubic-bezier(0.250, 0.460, 0.450, 0.940)";
+                    ripple.setAttribute("style", convertStyle(rippleStyle));
+                },
+                hide: function (e) {
+                    TouchHandler.touchup(e);
+                    var el = this;
+                    var width = el.clientWidth * 1.4;
+                    var ripple = null;
+                    var ripples = el.getElementsByClassName("waves-ripple");
+                    if (ripples.length > 0) {
+                        ripple = ripples[ripples.length - 1];
+                    } else {
+                        return false;
+                    }
+                    var relativeX = ripple.getAttribute("data-x");
+                    var relativeY = ripple.getAttribute("data-y");
+                    var scale = ripple.getAttribute("data-scale");
+                    var diff = Date.now() - Number(ripple.getAttribute("data-hold"));
+                    var delay = 350 - diff;
+                    if (delay < 0) {
+                        delay = 0;
+                    }
+                    setTimeout(function () {
+                        var style = {
+                            top: relativeY + "px",
+                            left: relativeX + "px",
+                            opacity: "0",
+                            "transition-duration": Effect.duration + "ms",
+                            transform: scale
+                        };
+                        ripple.setAttribute("style", convertStyle(style));
+                        setTimeout(function () {
+                            try {
+                                el.removeChild(ripple);
+                            } catch (e) {
+                                return false;
+                            }
+                        }, Effect.duration);
+                    }, delay);
+                },
+                wrapInput: function (elements) {
+                    for (var a = 0; a < elements.length; a++) {
+                        var el = elements[a];
+                        if (el.tagName.toLowerCase() === "input") {
+                            var parent = el.parentNode;
+                            if (
+                                parent.tagName.toLowerCase() === "i" &&
+                                parent.className.indexOf("btna") !== -1 ||
+                                parent.className.indexOf("btnc") !== -1 ||
+                                parent.className.indexOf("btnc") !== -1
+                            ) {
+                                continue;
+                            }
+                            var wrapper = document.createElement("i");
+                            wrapper.className = el.className + " waves-input-wrapper";
+                            var elementStyle = el.getAttribute("style");
+                            if (!elementStyle) {
+                                elementStyle = "";
+                            }
+                            wrapper.setAttribute("style", elementStyle);
+                            el.className = "waves-button-input";
+                            el.removeAttribute("style");
+                            parent.replaceChild(wrapper, el);
+                            wrapper.appendChild(el);
+                        }
+                    }
+                }
+        };
+        var TouchHandler = {
+            touches: 0,
+            allowEvent: function (e) {
+                    var allow = true;
+                    if (e.type === "touchstart") {
+                        TouchHandler.touches += 1; //push
+                    } else if (e.type === "touchend" || e.type === "touchcancel") {
+                        setTimeout(function () {
+                            if (TouchHandler.touches > 0) {
+                                TouchHandler.touches -= 1;
+                            }
+                        }, 500);
+                    } else if (e.type === "mousedown" && TouchHandler.touches > 0) {
+                        allow = false;
+                    }
+                    return allow;
+                },
+                touchup: function (e) {
+                    TouchHandler.allowEvent(e);
+                }
+        };
+
+        function getWavesEffectElement(e) {
+            if (TouchHandler.allowEvent(e) === false) {
+                return null;
+            }
+            var element = null;
+            var target = e.target || e.srcElement;
+            while (target.parentElement !== null) {
+                if (!(target instanceof SVGElement) &&
+                    target.className.indexOf("btna") !== -1 ||
+                    target.className.indexOf("btnb") !== -1 ||
+                    target.className.indexOf("btnc") !== -1
+                ) {
+                    element = target;
+                    break;
+                } else if (target.classList.contains("btna")) {
+                    element = target;
+                    break;
+                } else if (target.classList.contains("btnb")) {
+                    element = target;
+                    break;
+                } else if (target.classList.contains("btnc")) {
+                    element = target;
+                    break;
+                }
+                target = target.parentElement;
+            }
+            return element;
+        }
+
+        function showEffect(e) {
+            var element = getWavesEffectElement(e);
+            if (element !== null) {
+                Effect.show(e, element);
+                if ("ontouchstart" in window) {
+                    element.addEventListener("touchend", Effect.hide, false);
+                    element.addEventListener("touchcancel", Effect.hide, false);
+                }
+                element.addEventListener("mouseup", Effect.hide, false);
+                element.addEventListener("mouseleave", Effect.hide, false);
+            }
+        }
+        Waves.displayEffect = function (options) {
+            options = options || {};
+            if ("duration" in options) {
+                Effect.duration = options.duration;
+            }
+            Effect.wrapInput($$(".btna"));
+            Effect.wrapInput($$(".btnb"));
+            Effect.wrapInput($$(".btnc"));
+            if ("ontouchstart" in window) {
+                document.body.addEventListener("touchstart", showEffect, false);
+            }
+            document.body.addEventListener("mousedown", showEffect, false);
+        };
+        Waves.attach = function (element) {
+            if (element.tagName.toLowerCase() === "input") {
+                Effect.wrapInput([element]);
+                element = element.parentElement;
+            }
+            if ("ontouchstart" in window) {
+                element.addEventListener("touchstart", showEffect, false);
+            }
+            element.addEventListener("mousedown", showEffect, false);
+        };
+        window.Waves = Waves;
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+                Waves.displayEffect();
+            },
+            false
+        );
+    })(window);
+</script>
