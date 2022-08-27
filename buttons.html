@@ -1,13 +1,6 @@
-
-<button type="button" class="btna">
-    button
-</button>
-<button type="button" class="btnb">
-    button
-</button>
-<button type="button" class="btnc">
-    button
-</button>
+<button type="button" class="btna">button</button>
+<button type="button" class="btnb">button</button>
+<button type="button" class="btnc">button</button>
 <style>
     button {
         position: relative;
@@ -25,13 +18,12 @@
     .btna {
         background-color: #591be5;
         color: #fff;
-     /*box-shadow: 0px 2px 6px #888888;*/
+        /*box-shadow: 0px 2px 6px #888888;*/
     }
     .btna:hover {
         background-color: #6628e7;
-         /*box-shadow: 0px 4px 7px #888888;*/
+        /*box-shadow: 0px 4px 7px #888888;*/
     }
-
     .btnb,
     .btnc {
         background-color: transparent;
@@ -42,7 +34,6 @@
         background-color: rgba(89, 27, 229, 0.03);
         color: #591be5;
     }
-
     .btnb {
         border: solid 1px;
     }
@@ -72,7 +63,7 @@
         "use strict";
         var Waves = Waves || {};
         var $$ = document.querySelectorAll.bind(document);
-// Find exact position of element
+        // 查找元素的确切位置
         function isWindow(obj) {
             return obj !== null && obj === obj.window;
         }
@@ -109,44 +100,35 @@
             }
             return style;
         }
-        
         var Effect = {
-                    // Effect delay
-
+            // 效果延迟
             duration: 750,
             show: function (e, element) {
-                            // Disable right click
-
+                    // 禁用右键单击
                     if (e.button === 2) {
                         return false;
                     }
                     var el = element || this;
-                            // Create ripple
-
+                    // 产生波纹
                     var ripple = document.createElement("div");
                     ripple.className = "waves-ripple";
                     el.appendChild(ripple);
-                
-            // Get click coordinate and element witdh
+                    // 获取点击坐标和元素 witdh
                     var pos = offset(el);
                     var relativeY = e.pageY - pos.top;
                     var relativeX = e.pageX - pos.left;
                     var scale = "scale(" + (el.clientWidth / 100) * 10 + ")";
-                            // Support for touch devices
-
+                    // 支持触摸设备
                     if ("touches" in e) {
                         relativeY = e.touches[0].pageY - pos.top;
                         relativeX = e.touches[0].pageX - pos.left;
                     }
-                
-                            // Attach data to element
-
-                
+                    // 将数据附加到元素
                     ripple.setAttribute("data-hold", Date.now());
                     ripple.setAttribute("data-scale", scale);
                     ripple.setAttribute("data-x", relativeX);
                     ripple.setAttribute("data-y", relativeY);
-                // Set ripple position
+                    // 设置纹波位置
                     var rippleStyle = {
                         top: relativeY + "px",
                         left: relativeX + "px"
@@ -154,20 +136,18 @@
                     ripple.className = ripple.className + " waves-notransition";
                     ripple.setAttribute("style", convertStyle(rippleStyle));
                     ripple.className = ripple.className.replace("waves-notransition", "");
-                      // Scale the ripple
+                    // 扩大波纹
                     rippleStyle.transform = scale;
                     rippleStyle.opacity = "1";
                     rippleStyle["transition-duration"] = Effect.duration + "ms";
-                    rippleStyle["transition-timing-function"] =
-                        "cubic-bezier(0.250, 0.460, 0.450, 0.940)";
+                    rippleStyle["transition-timing-function"] = "cubic-bezier(0.250, 0.460, 0.450, 0.940)";
                     ripple.setAttribute("style", convertStyle(rippleStyle));
                 },
                 hide: function (e) {
                     TouchHandler.touchup(e);
                     var el = this;
                     var width = el.clientWidth * 1.4;
-                                // Get first ripple
-
+                    // 获得第一个波纹
                     var ripple = null;
                     var ripples = el.getElementsByClassName("waves-ripple");
                     if (ripples.length > 0) {
@@ -178,26 +158,23 @@
                     var relativeX = ripple.getAttribute("data-x");
                     var relativeY = ripple.getAttribute("data-y");
                     var scale = ripple.getAttribute("data-scale");
-                                // Get delay beetween mousedown and mouse leave
-
+                    // 延迟 鼠标下降和鼠标离开
                     var diff = Date.now() - Number(ripple.getAttribute("data-hold"));
                     var delay = 350 - diff;
                     if (delay < 0) {
                         delay = 0;
                     }
-                                                        // Fade out ripple after delay
-
+                    // 延迟后淡出纹波纹
                     setTimeout(function () {
                         var style = {
                             top: relativeY + "px",
                             left: relativeX + "px",
                             opacity: "0",
-                             // Duration
+                            // 期间
                             "transition-duration": Effect.duration + "ms",
                             transform: scale
                         };
                         ripple.setAttribute("style", convertStyle(style));
-
                         setTimeout(function () {
                             try {
                                 el.removeChild(ripple);
@@ -207,19 +184,14 @@
                         }, Effect.duration);
                     }, delay);
                 },
-                 // Little hack to make <input> can perform waves effect
+                // 使<input>可以执行波浪效果
                 wrapInput: function (elements) {
                     for (var a = 0; a < elements.length; a++) {
                         var el = elements[a];
                         if (el.tagName.toLowerCase() === "input") {
                             var parent = el.parentNode;
-                                 // If input already have parent just pass through
-                            if (
-                                parent.tagName.toLowerCase() === "i" &&
-                                parent.className.indexOf("btna") !== -1 ||
-                                parent.className.indexOf("btnc") !== -1 ||
-                                parent.className.indexOf("btnc") !== -1
-                            ) {
+                            // If input already have parent just pass through
+                            if (parent.tagName.toLowerCase() === "i" && parent.className.indexOf("btna") !== -1 || parent.className.indexOf("btnc") !== -1 || parent.className.indexOf("btnc") !== -1) {
                                 continue;
                             }
                             // Put element class and style to the specified parent
@@ -232,22 +204,21 @@
                             wrapper.setAttribute("style", elementStyle);
                             el.className = "waves-button-input";
                             el.removeAttribute("style");
-                                    // Put element as child
-                   
+                            // Put element as child
                             parent.replaceChild(wrapper, el);
                             wrapper.appendChild(el);
                         }
                     }
                 }
         };
-            /**
-     * Disable mousedown event for 500ms during and after touch
-     */
+        /**
+         * Disable mousedown event for 500ms during and after touch
+         */
         var TouchHandler = {
-              /* uses an integer rather than bool so there's no issues with
-         * needing to clear timeouts if another touch event occurred
-         * within the 500ms. Cannot mouseup between touchstart and
-         * touchend, nor in the 500ms after touchend. */
+            /* uses an integer rather than bool so there's no issues with
+             * needing to clear timeouts if another touch event occurred
+             * within the 500ms. Cannot mouseup between touchstart and
+             * touchend, nor in the 500ms after touchend. */
             touches: 0,
             allowEvent: function (e) {
                     var allow = true;
@@ -256,7 +227,7 @@
                     } else if (e.type === "touchend" || e.type === "touchcancel") {
                         setTimeout(function () {
                             if (TouchHandler.touches > 0) {
-                                TouchHandler.touches -= 1;//pop after 500ms
+                                TouchHandler.touches -= 1; //pop after 500ms
                             }
                         }, 500);
                     } else if (e.type === "mousedown" && TouchHandler.touches > 0) {
@@ -268,41 +239,38 @@
                     TouchHandler.allowEvent(e);
                 }
         };
-    /**
-     * Delegated click handler for .waves-effect element.
-     * returns null when .waves-effect element not in "click tree"
-     */
+        /**
+         * Delegated click handler for .waves-effect element.
+         * returns null when .waves-effect element not in "click tree"
+         */
         function getWavesEffectElement(e) {
-            if (TouchHandler.allowEvent(e) === false) {
-                return null;
-            }
-            var element = null;
-            var target = e.target || e.srcElement;
-            while (target.parentElement !== null) {
-                if (!(target instanceof SVGElement) &&
-                    target.className.indexOf("btna") !== -1 ||
-                    target.className.indexOf("btnb") !== -1 ||
-                    target.className.indexOf("btnc") !== -1
-                ) {
-                    element = target;
-                    break;
-                } else if (target.classList.contains("btna")) {
-                    element = target;
-                    break;
-                } else if (target.classList.contains("btnb")) {
-                    element = target;
-                    break;
-                } else if (target.classList.contains("btnc")) {
-                    element = target;
-                    break;
+                if (TouchHandler.allowEvent(e) === false) {
+                    return null;
                 }
-                target = target.parentElement;
+                var element = null;
+                var target = e.target || e.srcElement;
+                while (target.parentElement !== null) {
+                    if (!(target instanceof SVGElement) && target.className.indexOf("btna") !== -1 || target.className.indexOf("btnb") !== -1 || target.className.indexOf("btnc") !== -1) {
+                        element = target;
+                        break;
+                    } else if (target.classList.contains("btna")) {
+                        element = target;
+                        break;
+                    } else if (target.classList.contains("btnb")) {
+                        element = target;
+                        break;
+                    } else if (target.classList.contains("btnc")) {
+                        element = target;
+                        break;
+                    }
+                    target = target.parentElement;
+                }
+                return element;
             }
-            return element;
-        }
-    /**
-     * Bubble the click and show effect if .waves-effect elem was found
-     */
+            /**
+             * Bubble the click and show effect if .waves-effect elem was found
+             */
+
         function showEffect(e) {
             var element = getWavesEffectElement(e);
             if (element !== null) {
@@ -320,8 +288,7 @@
             if ("duration" in options) {
                 Effect.duration = options.duration;
             }
-                    //Wrap input inside <i> tag
-
+            //Wrap input inside <i> tag
             Effect.wrapInput($$(".btna"));
             Effect.wrapInput($$(".btnb"));
             Effect.wrapInput($$(".btnc"));
@@ -330,15 +297,15 @@
             }
             document.body.addEventListener("mousedown", showEffect, false);
         };
-            /**
-     * Attach Waves to an input element (or any element which doesn't
-     * bubble mouseup/mousedown events).
-     *   Intended to be used with dynamically loaded forms/inputs, or
-     * where the user doesn't want a delegated click handler.
-     */
+        /**
+         * Attach Waves to an input element (or any element which doesn't
+         * bubble mouseup/mousedown events).
+         *   Intended to be used with dynamically loaded forms/inputs, or
+         * where the user doesn't want a delegated click handler.
+         */
         Waves.attach = function (element) {
-                    //FUTURE: automatically add waves classes and allow users
-        // to specify them with an options param? Eg. light/classic/button
+            //FUTURE: automatically add waves classes and allow users
+            // to specify them with an options param? Eg. light/classic/button
             if (element.tagName.toLowerCase() === "input") {
                 Effect.wrapInput([element]);
                 element = element.parentElement;
@@ -349,12 +316,8 @@
             element.addEventListener("mousedown", showEffect, false);
         };
         window.Waves = Waves;
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
-                Waves.displayEffect();
-            },
-            false
-        );
+        document.addEventListener("DOMContentLoaded", function () {
+            Waves.displayEffect();
+        }, false);
     })(window);
 </script>
