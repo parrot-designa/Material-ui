@@ -12,7 +12,6 @@
         height: 36px;
         padding: 0 16px;
         overflow: hidden;
-        transition: all 0.4s ease-out;
     }
     /*颜色还需调整*/
     .btna {
@@ -184,32 +183,6 @@
                         }, Effect.duration);
                     }, delay);
                 },
-                // 使<input>可以执行波浪效果
-                wrapInput: function (elements) {
-                    for (var a = 0; a < elements.length; a++) {
-                        var el = elements[a];
-                        if (el.tagName.toLowerCase() === "input") {
-                            var parent = el.parentNode;
-                            // If input already have parent just pass through
-                            if (parent.tagName.toLowerCase() === "i" && parent.className.indexOf("btna") !== -1 || parent.className.indexOf("btnc") !== -1 || parent.className.indexOf("btnc") !== -1) {
-                                continue;
-                            }
-                            // Put element class and style to the specified parent
-                            var wrapper = document.createElement("i");
-                            wrapper.className = el.className + " waves-input-wrapper";
-                            var elementStyle = el.getAttribute("style");
-                            if (!elementStyle) {
-                                elementStyle = "";
-                            }
-                            wrapper.setAttribute("style", elementStyle);
-                            el.className = "waves-button-input";
-                            el.removeAttribute("style");
-                            // Put element as child
-                            parent.replaceChild(wrapper, el);
-                            wrapper.appendChild(el);
-                        }
-                    }
-                }
         };
         /**
          * Disable mousedown event for 500ms during and after touch
@@ -288,10 +261,7 @@
             if ("duration" in options) {
                 Effect.duration = options.duration;
             }
-            //Wrap input inside <i> tag
-            Effect.wrapInput($$(".btna"));
-            Effect.wrapInput($$(".btnb"));
-            Effect.wrapInput($$(".btnc"));
+
             if ("ontouchstart" in window) {
                 document.body.addEventListener("touchstart", showEffect, false);
             }
